@@ -53,6 +53,7 @@ public class MyRunner implements CommandLineRunner {
     public void run(String... strings) {
         String fileName = "employes.csv";
         readFile(fileName);
+
         employeRepository.save(employes);
     }
 
@@ -181,7 +182,13 @@ public class MyRunner implements CommandLineRunner {
 
 
             if(infoEmploye[6].matches("^[MTC][0-9]{5}$")){
-                if (managerRepository.findByMatricule(infoEmploye[6]) != null) {
+                ArrayList<String> matricules = new ArrayList<>();
+                for (Employe emp : employes) {
+                    if (emp instanceof Manager){
+                        matricules.add(emp.getMatricule());
+                    }
+                }
+                if (managerRepository.findByMatricule(infoEmploye[6]) != null || matricules.contains(infoEmploye[6])) {
                     t.setManager(managerRepository.findByMatricule(infoEmploye[6]));
                 } else {
                     throw new BatchException("Le manager de matricule "+ infoEmploye[6] +" n'a pas été trouvé dans le fichier ou en base de données ");
